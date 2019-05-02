@@ -41,10 +41,18 @@ CMake option to get this output)."
         (file-name-directory config_file_location)
       (message "Unable to find config file for %s, you need to create .clang-tidy file in your project root" checker))))
 
+(defun find-file-recursive (file)
+  "Find the first instance of FILE in a subdirectory of the current buffer directory."
+  (let filepath
+    (concat (file-name-directory (buffer-file-name))
+            (s-chop-prefix "./"
+                           (car
+                            (s-match ".*$"
+                                     (shell-command-to-string (concat "find . -name " file))))))))
+
 (defun flycheck-clang-tidy-compile-command (file)
   "Fetch compile command for FILE."
-  (let* ((cmds-file (concat (file-name-as-directory flycheck-clang-tidy-build-path)
-                            "compile_commands.json"))
+  (let* ((cmds-file (find-file-recursive "compile_commands.json"))
          (cmds (json-read-file cmds-file)))
     (seq-find (lambda (cmd) (string= (alist-get 'file cmd) file)) cmds)))
 
