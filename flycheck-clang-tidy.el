@@ -43,12 +43,12 @@ CMake option to get this output)."
 
 (defun find-file-recursive (file)
   "Find the first instance of FILE in a subdirectory of the current buffer directory."
-  (let filepath
-    (concat (file-name-directory (buffer-file-name))
-            (s-chop-prefix "./"
-                           (car
-                            (s-match ".*$"
-                                     (shell-command-to-string (concat "find . -name " file))))))))
+  (setq filepath
+        (concat (file-name-directory (buffer-file-name))
+                (s-chop-prefix "./"
+                               (car
+                                (s-match ".*$"
+                                         (shell-command-to-string (concat "find . -name " file))))))))
 
 (defun flycheck-clang-tidy-compile-command (file)
   "Fetch compile command for FILE."
